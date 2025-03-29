@@ -15,7 +15,7 @@ const config: HardhatUserConfig = {
     ],
   },
   networks: {
-    ganache: {
+    kairos: {
       url: 'https://public-en-kairos.node.kaia.io',
       accounts: [process.env.PRIVATE_KEY || ''],
     },
