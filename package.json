@@ -1,5 +1,5 @@
 {
-  "name": "hardhat-project",
+  "name": "inbrew",
   "scripts": {
     "compile": "npx hardhat compile",
     "deploy": "npx hardhat --network kairos run scripts/deploy.ts",
