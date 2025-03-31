@@ -89,6 +89,17 @@ async function main() {
     ]);
     const minOut = (amountsOut[1] * 99n) / 100n;
 
+    console.log(
+      `예상 BToken 수령량 (슬리피지 적용 전): ${ethers.formatEther(
+        amountsOut[1]
+      )} B`
+    );
+    console.log(
+      `슬리피지 적용 후 최소 수령량 (minOut): ${ethers.formatEther(minOut)} B`
+    );
+
+    await askToContinue();
+
     console.log('\n\nStep 3: Swap');
     console.log(
       'swapExactTokensForTokens() 함수를 이용하여 Swap을 실행합니다.'
@@ -272,7 +283,7 @@ async function main() {
     await delay(1000);
 
     console.log('\n유동성 제거가 성공적으로 완료되었습니다.');
-    console.log('🎉 Uniswap V2 전체 흐름이 완료되었습니다.');
+    console.log('\n\n🎉 지금까지 Uniswap V2 전체 흐름이 완료되었습니다.');
   } catch (error: any) {
     if (error.message.includes('INSUFFICIENT_OUTPUT_AMOUNT')) {
       console.log(

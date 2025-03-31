@@ -72,8 +72,9 @@ async function main() {
 
     console.log('\n\nStep 2: 슬리피지 설정');
     console.log(
-      '슬리피지(Slippage)란, 거래 중 가격 변동으로 인해 손해를 방지하기 위해 설정하는 허용 범위입니다.'
+      '슬리피지(Slippage)란, 거래 중 가격 변동으로 인해 손해를 방지하기 위해 설정하는 허용 범위입니다.\nUniswap은 공급 시점의 풀 상태에 따라 토큰 비율이 결정되기 때문에, 일정 범위 이상 변동이 생기면 트랜잭션을 실패시키게 됩니다.'
     );
+
     const SLIPPAGE_PERCENT = 1; // 1%
     console.log(`\n➡️ 현재 설정된 슬리피지: ${SLIPPAGE_PERCENT}%`);
 
@@ -87,10 +88,22 @@ async function main() {
 
     // A 1000개 공급 시, 필요한 B 수량은?
     const amountADesired = ethers.parseEther('1000');
-    const amountBDesired = (amountADesired * reserveB) / reserveA;
+    let amountBDesired: bigint;
+    let amountAMin: bigint;
+    let amountBMin: bigint;
 
-    const amountAMin = (amountADesired * BigInt(100 - SLIPPAGE_PERCENT)) / 100n;
-    const amountBMin = (amountBDesired * BigInt(100 - SLIPPAGE_PERCENT)) / 100n;
+    if (reserveA === 0n || reserveB === 0n) {
+      console.log(
+        '⚠️ 현재 유동성 풀이 비어 있어 최초 공급자로서 직접 비율을 설정합니다.'
+      );
+      amountBDesired = ethers.parseEther('1000');
+      amountAMin = (amountADesired * BigInt(99)) / 100n;
+      amountBMin = (amountBDesired * BigInt(99)) / 100n;
+    } else {
+      amountBDesired = (amountADesired * reserveB) / reserveA;
+      amountAMin = (amountADesired * BigInt(100 - SLIPPAGE_PERCENT)) / 100n;
+      amountBMin = (amountBDesired * BigInt(100 - SLIPPAGE_PERCENT)) / 100n;
+    }
 
     console.log(`🧮 슬리피지 하한 계산 예시:
         - 희망 공급량 A: 1000 → 최소 ${ethers.formatEther(amountAMin)} A
@@ -141,8 +154,8 @@ async function main() {
         const addLiquidity = await router.addLiquidity(
             aToken.target, // A 토큰
             bToken.target, // B 토큰
-            token1000, // A 토큰의 공급량
-            token1000, // B 토큰의 공급량
+            amountADesired, // A 토큰의 공급량
+            amountBDesired, // B 토큰의 공급량
             amountAMin, // A 토큰의 최소 공급량
             amountBMin, // B 토큰의 최소 공급량
             owner.address // Owner
@@ -155,8 +168,8 @@ async function main() {
     const addLiquidity = await router.addLiquidity(
       aToken.target,
       bToken.target,
-      token1000,
-      token1000,
+      amountADesired,
+      amountBDesired,
       amountAMin,
       amountBMin,
       owner.address
@@ -177,6 +190,9 @@ async function main() {
     await delay(1000);
 
     console.log('\n\n Step 4: LP 토큰 수령');
+    console.log(
+      'LP Token은 유동성 풀에 기여한 만큼의 지분을 나타내는 토큰입니다. 이 토큰을 나중에 반납하면 예치했던 토큰과 수수료 수익을 돌려받을 수 있습니다.'
+    );
     console.log(
       'addLiquidity() 함수 실행으로 유동성 풀에 예치가 완료 되었습니다.\n예치의 대가로 받은 LP 토큰 수량 확인하겠습니다.'
     );
