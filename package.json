@@ -4,8 +4,7 @@
     "compile": "npx hardhat compile",
     "deploy": "npx hardhat --network kairos run scripts/deploy.ts",
     "setting": "npx hardhat --network kairos run scripts/setting.ts",
-    "test:proxy": "npx hardhat test test/proxy.test.ts",
-    "test:upgrade": "npx hardhat test test/upgrade.test.ts"
+    "swap": "npx hardhat --network kairos run scripts/swap.ts"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",

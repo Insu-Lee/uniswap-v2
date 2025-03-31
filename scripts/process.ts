@@ -14,3 +14,6 @@ export async function askToContinue(
     process.exit(0);
   }
 }
+
+export const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
